@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TestCase from './TestCase';
+import TestExecution from './TestExecution';
 import { FiChevronDown, FiChevronRight, FiPlus, FiTrash2 } from 'react-icons/fi';
 
 const TestSuite = () => {
@@ -11,6 +12,7 @@ const TestSuite = () => {
     description: ''
   });
   const [expandedSuites, setExpandedSuites] = useState({});
+  const [selectedTestCaseId, setSelectedTestCaseId] = useState(null);
 
   useEffect(() => {
     fetchTestSuites();
@@ -161,7 +163,16 @@ const TestSuite = () => {
               {expandedSuites[suite._id] && (
                 <div className="suite-content">
                   {suite.description && <p className="suite-description">{suite.description}</p>}
-                  <TestCase testSuiteId={suite._id} />
+                  <TestCase 
+                    testSuiteId={suite._id} 
+                    onTestCaseSelect={(id) => {
+                      console.log('Test case selected with ID:', id);
+                      setSelectedTestCaseId(id);
+                    }}
+                  />
+                  {selectedTestCaseId && (
+                    <TestExecution testCaseId={selectedTestCaseId} />
+                  )}
                 </div>
               )}
             </div>

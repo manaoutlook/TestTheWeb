@@ -55,9 +55,27 @@
 }
 
 .card-footer {
+  display: block;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.steps-line {
+  margin-bottom: 4px;
+  color: #666;
+}
+
+.url-line {
   display: flex;
   align-items: center;
-  font-size: 0.85rem;
+}
+
+.url-link {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  display: inline-block;
 }
 
 .url-label {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './TestCase.css';
 
-const TestCase = ({ testSuiteId }) => {
+const TestCase = ({ testSuiteId, onTestCaseSelect }) => {
   const [testCases, setTestCases] = useState([]);
   const [newTestCase, setNewTestCase] = useState({
     name: '',
@@ -199,23 +199,34 @@ const TestCase = ({ testSuiteId }) => {
 
       <div className="test-cases-list">
         {testCases.length > 0 ? (
-          testCases.map(testCase => (
-            <div key={testCase._id} className="test-case-card">
-              <div className="card-header">
-                <h4 className="card-title">{testCase.name}</h4>
-                <span className="steps-badge">{testCase.steps.length} steps</span>
-              </div>
-              <div className="card-body">
-                <p className="card-description">{testCase.description}</p>
-                <div className="card-footer">
-                  <span className="url-label">Target URL:</span>
-                  <a href={testCase.targetUrl} target="_blank" rel="noopener noreferrer" className="url-link">
-                    {testCase.targetUrl}
-                  </a>
+          testCases.map(testCase => {
+            console.log('Test Case Data:', testCase);
+            return (
+              <div 
+                key={testCase._id} 
+                className="test-case-card"
+                onClick={() => onTestCaseSelect && onTestCaseSelect(testCase._id)}
+              >
+                <div className="card-header">
+                  <h4 className="card-title">{testCase.name}</h4>
+                  <span className="steps-badge">{testCase.steps.length} steps</span>
+                </div>
+                <div className="card-body">
+                  <p className="card-description">{testCase.description}</p>
+                  <div className="card-footer">
+                    <div style={{display: 'block'}}>Steps: {testCase.steps ? testCase.steps.length : 0}</div>
+                  
+                    <div style={{display: 'block'}}>
+                      <span>Target URL: </span>
+                      <a href={testCase.targetUrl || '#'} target="_blank" rel="noopener noreferrer">
+                        {testCase.targetUrl || 'No URL provided'}
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <p className="empty-state">No test cases yet. Create your first one!</p>
         )}

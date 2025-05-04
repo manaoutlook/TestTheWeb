@@ -6,7 +6,11 @@ const app = express();
 const PORT = process.env.PORT || 3101;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3102',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(bodyParser.json());
 
 // Database connection
@@ -14,7 +18,17 @@ mongoose.connect('mongodb://localhost:27017/testtheweb', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log('Connected to MongoDB'))
+.then(async () => {
+  console.log('Connected to MongoDB');
+  try {
+    const collections = await mongoose.connection.db.listCollections().toArray();
+    console.log('Available collections:', collections.map(c => c.name));
+    const testCasesExist = collections.some(c => c.name === 'testcases');
+    console.log('Test cases collection exists:', testCasesExist);
+  } catch (err) {
+    console.error('Error checking collections:', err);
+  }
+})
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Test Suite Model
@@ -73,6 +87,18 @@ app.get('/api/testcases', async (req, res) => {
   try {
     const testCases = await TestCase.find();
     res.json(testCases);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+app.get('/api/testcases/:id', async (req, res) => {
+  try {
+    const testCase = await TestCase.findById(req.params.id);
+    if (!testCase) {
+      return res.status(404).json({ message: 'Test case not found' });
+    }
+    res.json(testCase);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -338,13 +364,33 @@ async function executeTestCase(executionId, testCase) {
         
         switch(step.type) {
           case 'click':
-            await page.click(step.selector);
-            result = { success: true, message: `Clicked ${step.selector}` };
+            const clickElement = await page.$(step.selector);
+            if (!clickElement) {
+              throw new Error(`Element not found: ${step.selector}`);
+            }
+            const clickBox = await clickElement.boundingBox();
+            await clickElement.click();
+            result = { 
+              success: true, 
+              message: `Clicked ${step.selector}`,
+              targetX: clickBox.x + clickBox.width/2,
+              targetY: clickBox.y + clickBox.height/2
+            };
             break;
             
           case 'input':
-            await page.fill(step.selector, step.value);
-            result = { success: true, message: `Entered "${step.value}" in ${step.selector}` };
+            const inputElement = await page.$(step.selector);
+            if (!inputElement) {
+              throw new Error(`Element not found: ${step.selector}`);
+            }
+            const inputBox = await inputElement.boundingBox();
+            await inputElement.fill(step.value);
+            result = { 
+              success: true, 
+              message: `Entered "${step.value}" in ${step.selector}`,
+              targetX: inputBox.x + inputBox.width/2,
+              targetY: inputBox.y + inputBox.height/2
+            };
             break;
             
           case 'navigation':
@@ -357,7 +403,9 @@ async function executeTestCase(executionId, testCase) {
             result = { 
               success: true, 
               message: 'Screenshot captured',
-              screenshot: screenshot.toString('base64') 
+              screenshot: screenshot.toString('base64'),
+              targetX: 0,
+              targetY: 0 
             };
             break;
         }
