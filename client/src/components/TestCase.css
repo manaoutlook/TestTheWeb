@@ -1,0 +1,105 @@
+.test-case-container {
+  padding: 20px;
+}
+
+.test-case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.test-cases-list {
+  display: grid;
+  gap: 15px;
+}
+
+.test-case-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.test-case-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.steps-badge {
+  background: #f0f0f0;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.card-description {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.url-label {
+  color: #666;
+  margin-right: 5px;
+}
+
+.url-link {
+  color: #0066cc;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.url-link:hover {
+  text-decoration: underline;
+}
+
+.empty-state {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+}
+
+.primary-button {
+  background: #0066cc;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.primary-button:hover {
+  background: #0052a3;
+}
+
+.primary-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
